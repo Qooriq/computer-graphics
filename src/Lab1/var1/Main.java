@@ -1,4 +1,4 @@
-package Lab1;
+package Lab1.var1;
 
 import Lab1.colors.CMYK;
 import Lab1.colors.HLS;
@@ -136,6 +136,7 @@ public class Main extends JFrame {
                 colorChooser.setColor(color);
                 updateHLSFields(color);
                 updateRGBFields(color);
+                updateCMYKFields(color);
             }
 
         } catch (NumberFormatException ignored) {

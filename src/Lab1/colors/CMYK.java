@@ -13,6 +13,6 @@ public class CMYK {
 
     public static double[] cmykToHls(double c, double m, double y, double k) {
         int[] rgb = cmykToRgb(c, m, y, k);
-        return RGB.rgbToCmyk(rgb[0], rgb[1], rgb[2]);
+        return RGB.rgbToHls(rgb[0], rgb[1], rgb[2]);
     }
 }

@@ -17,7 +17,6 @@ public class HLS {
             r = g = b = l;
         } else {
             double m2 = (l < 0.5) ? l * (1 + s) : l + s - (l * s);
-            m2 %= 256;
             double m1 = 2 * l - m2;
             r = hueToRgb(m1, m2, h + 120);
             g = hueToRgb(m1, m2, h);
