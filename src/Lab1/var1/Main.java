@@ -154,7 +154,7 @@ public class Main extends JFrame {
         int g = color.getGreen();
         int b = color.getBlue();
 
-        double[] cmyk = RGB.rgbToCmyk(r, g, b);
+        int[] cmyk = RGB.rgbToCmyk(r, g, b);
 
         cField.setText(String.format("%.2f", cmyk[0] * 100.0));
         mField.setText(String.format("%.2f", cmyk[1] * 100.0));
@@ -167,7 +167,7 @@ public class Main extends JFrame {
         int r = color.getRed();
         int g = color.getGreen();
         int b = color.getBlue();
-        double[] hls = RGB.rgbToHls(r, g, b);
+        int[] hls = RGB.rgbToHls(r, g, b);
         hField.setText(String.format("%.2f", hls[0]));
         lField.setText(String.format("%.2f", hls[1] * 100.0));
         sField.setText(String.format("%.2f", hls[2] * 100.0));

@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Conversion</title>
+    <style>
+        .main {
+            margin-left: 30px;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .type {
+            display: flex;
+        }
+
+        .slider {
+            width: 300px;
+        }
+
+        .slider_cmyk {
+            width: 300px;
+        }
+
+        .slider_hsl {
+            width: 300px;
+        }
+
+        .color-box {
+            width: 100%;
+            height: 100px;
+            margin-top: 20px;
+            border: 1px solid #000000;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Converter</h1>
+
+<div class="ool">
+    <div class="loo">
+        <div class="type">
+            <label>RGB</label>
+            <div class="main">
+                <p>Red</p>
+                <input type="range" id="r" class="slider" min="0" max="255" value="128">
+                <input type="number" id="rText" class="text_rgb" min="0" max="255" value="128">
+            </div>
+            <div class="main">
+                <p>Green</p>
+                <input type="range" id="g" class="slider" min="0" max="255" value="128">
+                <input type="number" id="gText" class="text_rgb" min="0" max="255" value="128">
+            </div>
+            <div class="main">
+                <p>Blue</p>
+                <input type="range" id="b" class="slider" min="0" max="255" value="128">
+                <input type="number" id="bText" class="text_rgb" min="0" max="255" value="128">
+            </div>
+        </div>
+
+        <div class="type">
+            <label>CMYK</label>
+            <div class="main">
+                <p>Cyan</p>
+                <input type="range" id="c" class="slider_cmyk" min="0" max="100" value="0">
+                <input type="number" id="cText" class="text_cmyk" min="0" max="100" value="0">
+            </div>
+            <div class="main">
+                <p>Magenta</p>
+                <input type="range" id="m" class="slider_cmyk" min="0" max="100" value="0">
+                <input type="number" id="mText" class="text_cmyk" min="0" max="100" value="0">
+            </div>
+            <div class="main">
+                <p>Yellow</p>
+                <input type="range" id="y" class="slider_cmyk" min="0" max="100" value="0">
+                <input type="number" id="yText" class="text_cmyk" min="0" max="100" value="0">
+            </div>
+            <div class="main">
+                <p>Key</p>
+                <input type="range" id="k" class="slider_cmyk" min="0" max="100" value="0">
+                <input type="number" id="kText" class="text_cmyk" min="0" max="100" value="0">
+            </div>
+        </div>
+
+        <div class="type">
+            <label>HSL</label>
+            <div class="main">
+                <p>Hue</p>
+                <input type="range" id="h" class="slider_hsl" min="0" max="360" value="180">
+                <input type="number" id="hText" class="text_hsl" min="0" max="360" value="180">
+            </div>
+            <div class="main">
+                <p>Saturation</p>
+                <input type="range" id="s" class="slider_hsl" min="0" max="100" value="50">
+                <input type="number" id="sText" class="text_hsl" min="0" max="100" value="60">
+            </div>
+            <div class="main">
+                <p>Luminance</p>
+                <input type="range" id="l" class="slider_hsl" min="0" max="100" value="50">
+                <input type="number" id="lText" class="text_hsl" min="0" max="100" value="60">
+            </div>
+        </div>
+    </div>
+    <div class="loo">
+        <div class="color-box" id="colorBox"></div>
+    </div>
+</div>
+<script>
+    function updateRgb() {
+        const r = parseInt(document.getElementById('r').value);
+        const g = parseInt(document.getElementById('g').value);
+        const b = parseInt(document.getElementById('b').value);
+
+        convertFromRgb(r, g, b);
+    }
+
+    function updateRgbText() {
+
+        let r = parseInt(document.getElementById('rText').value === '' ? 0 : document.getElementById('rText').value);
+        r = r > 255 ? 255 : r;
+        let g = parseInt(document.getElementById('gText').value === '' ? 0 : document.getElementById('gText').value);
+        g = g > 255 ? 255 : g;
+        let b = parseInt(document.getElementById('bText').value === '' ? 0 : document.getElementById('bText').value);
+        b = b > 255 ? 255 : b;
+
+        convertFromRgb(r, g, b);
+
+        document.getElementById('r').value = r;
+        document.getElementById('g').value = g;
+        document.getElementById('b').value = b;
+    }
+
+    function convertFromRgb(r, g, b) {
+        //to cmyk
+
+        let rs = r / 255;
+        let gs = g / 255;
+        let bs = b / 255;
+        let k = 1 - Math.max(rs, gs, bs);
+        document.getElementById("c").value = 1 - k === 0 ? 0 : 100 * ((1 - rs - k) / (1 - k));
+        document.getElementById("m").value = 1 - k === 0 ? 0 : 100 * ((1 - gs - k) / (1 - k));
+        document.getElementById("y").value = 1 - k === 0 ? 0 : 100 * ((1 - bs - k) / (1 - k));
+        document.getElementById("k").value = 100 * k;
+
+        //to hsl
+        let cmax = Math.max(rs, gs, bs);
+        let cmin = Math.min(rs, gs, bs);
+
+        let delta = cmax - cmin;
+
+        let s;
+        let l = (cmax + cmin) / 2;
+        let h = 60 * ((rs - gs) / delta + 4);
+        if (delta === 0) {
+            h = 0;
+        } else if (cmax === rs) {
+            h = 60 * (Math.abs((gs - bs)) / delta % 6);
+        } else if (cmax === gs) {
+            h = 60 * ((bs - rs) / delta + 2);
+        }
+
+        s = cmax === 0 ? 0 : delta / cmax * 100;
+
+        l = l * 100;
+
+        document.getElementById('h').value = h;
+        document.getElementById('s').value = s;
+        document.getElementById('l').value = l;
+
+        document.getElementById('rText').value = r;
+        document.getElementById('gText').value = g;
+        document.getElementById('bText').value = b;
+
+        document.getElementById('cText').value = 1 - k === 0 ? 0 : 100 * ((1 - rs - k) / (1 - k));
+        document.getElementById('mText').value = 1 - k === 0 ? 0 : 100 * ((1 - gs - k) / (1 - k));
+        document.getElementById('yText').value = 1 - k === 0 ? 0 : 100 * ((1 - bs - k) / (1 - k));
+        document.getElementById('kText').value = 100 * k;
+
+        document.getElementById('hText').value = h;
+        document.getElementById('sText').value = s;
+        document.getElementById('lText').value = l;
+
+        document.getElementById('colorBox').style.backgroundColor = "rgb("+r+","+g+","+b+")";
+    }
+
+    function updateCmyk() {
+        const c = parseInt(document.getElementById('c').value) / 100;
+        const m = parseInt(document.getElementById('m').value) / 100;
+        const y = parseInt(document.getElementById('y').value) / 100;
+        const k = parseInt(document.getElementById('k').value) / 100;
+
+        convertFromCmyk(c, m, y, k);
+    }
+
+    function updateCmykText() {
+        let c = parseInt(document.getElementById('cText').value === '' ? 0 : document.getElementById('cText').value);
+        c = c > 100 ? 100 : c;
+        c /= 100;
+        let m = parseInt(document.getElementById('mText').value === '' ? 0 : document.getElementById('mText').value);
+        m = m > 100 ? 100 : m;
+        m /= 100;
+        let y = parseInt(document.getElementById('yText').value === '' ? 0 : document.getElementById('yText').value);
+        y = y > 100 ? 100 : y;
+        y /= 100;
+        let k = parseInt(document.getElementById('kText').value === '' ? 0 : document.getElementById('kText').value);
+        k = k > 100 ? 100 : k;
+        k /= 100;
+
+        convertFromCmyk(c, m, y, k);
+        document.getElementById('c').value = c * 100;
+        document.getElementById('m').value = m * 100;
+        document.getElementById('y').value = y * 100;
+        document.getElementById('k').value = k * 100;
+    }
+
+    function convertFromCmyk(c, m, y, k) {
+        //to rgb
+        let r = 255 * (1 - c) * (1 - k);
+        let g = 255 * (1 - m) * (1 - k);
+        let b = 255 * (1 - y) * (1 - k);
+
+        document.getElementById('r').value = r;
+        document.getElementById('g').value = g;
+        document.getElementById('b').value = b;
+
+        let rs = r / 255;
+        let gs = g / 255;
+        let bs = b / 255;
+
+        let cmax = Math.max(rs, gs, bs);
+        let cmin = Math.min(rs, gs, bs);
+
+        let delta = cmax - cmin;
+
+        let s;
+        let l = (cmax + cmin) / 2;
+        let h = 60 * ((rs - gs) / delta + 4);
+        if (delta === 0) {
+            h = 0;
+        } else if (cmax === rs) {
+            h = 60 * (Math.abs((gs - bs)) / delta % 6);
+        } else if (cmax === gs) {
+            h = 60 * ((bs - rs) / delta + 2);
+        }
+
+        s = cmax === 0 ? 0 : delta / cmax * 100;
+
+        l = l * 100;
+
+        document.getElementById('h').value = h;
+        document.getElementById('s').value = s;
+        document.getElementById('l').value = l;
+
+        document.getElementById('rText').value = r;
+        document.getElementById('gText').value = g;
+        document.getElementById('bText').value = b;
+
+        document.getElementById('cText').value = c * 100;
+        document.getElementById('mText').value = m * 100;
+        document.getElementById('yText').value = y * 100;
+        document.getElementById('kText').value = k * 100;
+
+        document.getElementById('hText').value = h;
+        document.getElementById('sText').value = s;
+        document.getElementById('lText').value = l;
+
+        document.getElementById('colorBox').style.backgroundColor = "rgb("+r+","+g+","+b+")";
+    }
+
+    function updateHsl() {
+        const h = parseInt(document.getElementById('h').value);
+        const s = parseInt(document.getElementById('s').value) / 100;
+        const l = parseInt(document.getElementById('l').value) / 100;
+
+        convertFromHsl(h, s, l);
+    }
+
+    function updateHslText() {
+        let h = parseInt(document.getElementById('hText').value === '' ? 0 : document.getElementById('hText').value);
+        h = h > 360 ? 360 : h;
+        let s = parseInt(document.getElementById('sText').value === '' ? 0 : document.getElementById('sText').value);
+        s = s > 100 ? 100 : s;
+        s /= 100;
+        let l = parseInt(document.getElementById('lText').value === '' ? 0 : document.getElementById('lText').value);
+        l = l > 100 ? 100 : l;
+        l /= 100;
+
+        convertFromHsl(h, s, l);
+
+        document.getElementById('h').value = h;
+        document.getElementById('s').value = s * 100;
+        document.getElementById('l').value = l * 100;
+    }
+
+    function convertFromHsl(h, s, l) {
+        //to rgb
+        let c = (1 - Math.abs(2 * l - 1)) * s;
+        let x = c * (1 - Math.abs(h / 60 % 2 - 1));
+        let m = l - c / 2;
+        let rs = c, gs = 0, bs = x;
+        if (h < 60) {
+            rs = c;
+            gs = x;
+            bs = 0;
+        } else if (h < 120) {
+            rs = x;
+            gs = c;
+            bs = 0;
+        } else if (h < 180) {
+            rs = 0;
+            gs = c;
+            bs = x;
+        } else if (h < 240) {
+            rs = 0;
+            gs = x;
+            bs = c;
+        } else if (h < 300) {
+            rs = x;
+            gs = 0;
+            bs = c;
+        }
+        let r = (rs + m) * 255;
+        let g = (gs + m) * 255;
+        let b = (bs + m) * 255;
+
+        document.getElementById('r').value = r;
+        document.getElementById('g').value = g;
+        document.getElementById('b').value = b;
+
+        //to cmyk
+        let rsh = r / 255;
+        let gsh = g / 255;
+        let bsh = b / 255;
+        let k = 1 - Math.max(rsh, gsh, bsh);
+        document.getElementById("c").value = 1 - k === 0 ? 0 : 100 * ((1 - rsh - k) / (1 - k));
+        document.getElementById("m").value = 1 - k === 0 ? 0 : 100 * ((1 - gsh - k) / (1 - k));
+        document.getElementById("y").value = 1 - k === 0 ? 0 : 100 * ((1 - bsh - k) / (1 - k));
+        document.getElementById("k").value = 100 * k;
+
+        document.getElementById('rText').value = r;
+        document.getElementById('gText').value = g;
+        document.getElementById('bText').value = b;
+
+        document.getElementById('cText').value = 1 - k === 0 ? 0 : 100 * ((1 - rsh - k) / (1 - k));
+        document.getElementById('mText').value = 1 - k === 0 ? 0 : 100 * ((1 - gsh - k) / (1 - k));
+        document.getElementById('yText').value = 1 - k === 0 ? 0 : 100 * ((1 - bsh - k) / (1 - k));
+        document.getElementById('kText').value = 100 * k;
+
+        document.getElementById('hText').value = h;
+        document.getElementById('sText').value = s * 100;
+        document.getElementById('lText').value = l * 100;
+
+
+        document.getElementById('colorBox').style.backgroundColor = "rgb("+r+","+g+","+b+")";
+    }
+
+
+    document.querySelectorAll('.slider').forEach(slider => {
+        slider.addEventListener('input', updateRgb);
+    });
+
+    document.querySelectorAll('.slider_cmyk').forEach(slider => {
+        slider.addEventListener('input', updateCmyk);
+    });
+
+    document.querySelectorAll('.slider_hsl').forEach(slider => {
+        slider.addEventListener('input', updateHsl);
+    });
+
+    document.querySelectorAll('.text_rgb').forEach(slider => {
+        slider.addEventListener('input', updateRgbText);
+    });
+
+    document.querySelectorAll('.text_cmyk').forEach(slider => {
+        slider.addEventListener('input', updateCmykText);
+    });
+
+    document.querySelectorAll('.text_hsl').forEach(slider => {
+        slider.addEventListener('input', updateHslText);
+    });
+
+    // updateRgb();
+</script>
+
+</body>
+</html>

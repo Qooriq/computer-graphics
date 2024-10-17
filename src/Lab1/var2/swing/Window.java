@@ -45,6 +45,7 @@ public class Window extends JFrame {
     private JSlider sSlider = new JSlider(0, 100, 0);
     private final JButton setHLSButton = new JButton("Set HSL");
 
+
     int rCount = 0;
     int cCount = 0;
     int hCount = 0;
@@ -95,26 +96,26 @@ public class Window extends JFrame {
         kField.setBounds(40, 20, 50, 25);
         cmykPanel.add(cSlider);
         cSlider.addChangeListener(e -> {
-            cField.setText("%.2f".formatted(cSlider.getValue() / 100.0));
+            cField.setText(String.valueOf(cSlider.getValue()));
             updateFromCmyk(++cCount);
             --cCount;
         });
 
         cmykPanel.add(mSlider);
         mSlider.addChangeListener(e -> {
-            mField.setText("%.2f".formatted(mSlider.getValue() / 100.0));
+            mField.setText(String.valueOf(mSlider.getValue()));
             updateFromCmyk(++cCount);
             --cCount;
         });
         cmykPanel.add(ySlider);
         ySlider.addChangeListener(e -> {
-            yField.setText("%.2f".formatted(ySlider.getValue() / 100.0));
+            yField.setText(String.valueOf(ySlider.getValue()));
             updateFromCmyk(++cCount);
             --cCount;
         });
         cmykPanel.add(kSlider);
         kSlider.addChangeListener(e -> {
-            kField.setText("%.2f".formatted(kSlider.getValue() / 100.0));
+            kField.setText(String.valueOf(kSlider.getValue()));
             updateFromCmyk(++cCount);
             --cCount;
         });
@@ -138,13 +139,13 @@ public class Window extends JFrame {
         });
         hlsPanel.add(lSlider);
         lSlider.addChangeListener(e -> {
-            lField.setText("%.2f".formatted(lSlider.getValue() / 100.0));
+            lField.setText(String.valueOf(lSlider.getValue()));
             updateFromHLS(++hCount);
             --hCount;
         });
         hlsPanel.add(sSlider);
         sSlider.addChangeListener(e -> {
-            sField.setText("%.2f".formatted(sSlider.getValue() / 100.0));
+            sField.setText(String.valueOf(sSlider.getValue()));
             updateFromHLS(++hCount);
             --hCount;
         });
@@ -156,42 +157,41 @@ public class Window extends JFrame {
         colorPanel.setBackground(new Color(0, 0, 0));
         add(colorPanel);
 
-
         setVisible(true);
     }
 
     private void updateFromRgb(int i) {
-        if (i < 2) {
+        if (i <= 1) {
             int r = rSlider.getValue();
             int g = gSlider.getValue();
             int b = bSlider.getValue();
 
             // Update CMYK
-            double[] cmyk = RGB.rgbToCmyk(r, g, b);
+            int[] cmyk = RGB.rgbToCmyk(r, g, b);
             cField.setText(String.valueOf(cmyk[0]));
-            cSlider.setValue((int) (cmyk[0] * 100));
+            cSlider.setValue(cmyk[0]);
             mField.setText(String.valueOf(cmyk[1]));
-            mSlider.setValue((int) (cmyk[1] * 100));
+            mSlider.setValue(cmyk[1]);
             yField.setText(String.valueOf(cmyk[2]));
-            ySlider.setValue((int) (cmyk[2] * 100));
+            ySlider.setValue(cmyk[2]);
             kField.setText(String.valueOf(cmyk[3]));
-            kSlider.setValue((int) (cmyk[3] * 100));
+            kSlider.setValue(cmyk[3]);
 
             // Update HLS
-            double[] hls = RGB.rgbToHls(r, g, b);
+            int[] hls = RGB.rgbToHls(r, g, b);
             hField.setText(String.valueOf(hls[0]));
-            hSlider.setValue((int) hls[0]);
+            hSlider.setValue(hls[0]);
             sField.setText(String.valueOf(hls[1]));
-            sSlider.setValue((int) (hls[1] * 100));
+            sSlider.setValue(hls[1]);
             lField.setText(String.valueOf(hls[2]));
-            lSlider.setValue((int) (hls[2] * 100));
+            lSlider.setValue(hls[2]);
 
             colorPanel.setBackground(new Color(r, g, b));
         }
     }
 
     private void updateFromCmyk(int i) {
-        if (i < 2) {
+        if (i <= 1) {
             double c = cSlider.getValue() / 100.0;
             double m = mSlider.getValue() / 100.0;
             double y = ySlider.getValue() / 100.0;
@@ -204,10 +204,10 @@ public class Window extends JFrame {
             bSlider.setValue(rgb[2]);
 
             // Update HLS
-            double[] hls = CMYK.cmykToHls(c, m, y, k);
+            int[] hls = CMYK.cmykToHls(c, m, y, k);
             hField.setText(String.valueOf(hls[0]));
-            sField.setText("%.2f".formatted(hls[1]));
-            lField.setText("%.2f".formatted(hls[2]));
+            sField.setText(String.valueOf(hls[1]));
+            lField.setText(String.valueOf(hls[2]));
 
             colorPanel.setBackground(new Color(rgb[0], rgb[1], rgb[2]));
         }
@@ -215,7 +215,7 @@ public class Window extends JFrame {
     }
 
     private void updateFromHLS(int i) {
-        if (i < 2) {
+        if (i <= 1) {
             double h = hSlider.getValue();
             double l = lSlider.getValue() / 100.0;
             double s = sSlider.getValue() / 100.0;
@@ -227,11 +227,11 @@ public class Window extends JFrame {
             bSlider.setValue(rgb[2]);
 
             // Update HLS
-            double[] cmyk = HLS.hlsToCmyk(h, l, s);
-            cField.setText("%.2f".formatted(cmyk[0]));
-            mField.setText("%.2f".formatted(cmyk[1]));
-            yField.setText("%.2f".formatted(cmyk[2]));
-            kField.setText("%.2f".formatted(cmyk[3]));
+            int[] cmyk = HLS.hlsToCmyk(h, l, s);
+            cField.setText(String.valueOf(cmyk[0]));
+            mField.setText(String.valueOf(cmyk[1]));
+            yField.setText(String.valueOf(cmyk[2]));
+            kField.setText(String.valueOf(cmyk[3]));
 
             colorPanel.setBackground(new Color(rgb[0], rgb[1], rgb[2]));
         }
@@ -251,10 +251,10 @@ public class Window extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            cSlider.setValue((int) (Double.parseDouble(cField.getText()) * 100));
-            mSlider.setValue((int) (Double.parseDouble(mField.getText()) * 100));
-            ySlider.setValue((int) (Double.parseDouble(yField.getText()) * 100));
-            kSlider.setValue((int) (Double.parseDouble(kField.getText()) * 100));
+            cSlider.setValue((int) (Double.parseDouble(cField.getText())));
+            mSlider.setValue((int) (Double.parseDouble(mField.getText())));
+            ySlider.setValue((int) (Double.parseDouble(yField.getText())));
+            kSlider.setValue((int) (Double.parseDouble(kField.getText())));
         }
     }
 
@@ -263,152 +263,8 @@ public class Window extends JFrame {
         @Override
         public void actionPerformed(ActionEvent e) {
             hSlider.setValue((int) (Double.parseDouble(hField.getText())));
-            lSlider.setValue((int) (Double.parseDouble(lField.getText()) * 100));
-            sSlider.setValue((int) (Double.parseDouble(sField.getText()) * 100));
+            lSlider.setValue((int) (Double.parseDouble(lField.getText())));
+            sSlider.setValue((int) (Double.parseDouble(sField.getText())));
         }
     }
-
-//    private class RGBSlideListener implements ChangeListener {
-//
-//        @Override
-//        public void stateChanged(ChangeEvent e) {
-//            if (rCount < 1) {
-//                int r = rSlider.getValue();
-//                int g = gSlider.getValue();
-//                int b = bSlider.getValue();
-//
-//                rField.setText(String.valueOf(r));
-//                gField.setText(String.valueOf(g));
-//                bField.setText(String.valueOf(b));
-//
-//                rSlider.setValue(r);
-//                gSlider.setValue(g);
-//                bSlider.setValue(b);
-//
-//                double[] cmyk = RGB.rgbToCmyk(r, g, b);
-//
-//                cField.setText(String.valueOf(cmyk[0]));
-//                mField.setText(String.valueOf(cmyk[1]));
-//                yField.setText(String.valueOf(cmyk[2]));
-//                kField.setText(String.valueOf(cmyk[3]));
-//
-//                cSlider.setValue((int) cmyk[0]);
-//                mSlider.setValue((int) cmyk[1]);
-//                ySlider.setValue((int) cmyk[2]);
-//                kSlider.setValue((int) cmyk[3]);
-//
-//                double[] hls = RGB.rgbToHls(r, g, b);
-//
-//                hField.setText(String.valueOf(hls[0]));
-//                lField.setText(String.valueOf(hls[1]));
-//                sField.setText(String.valueOf(hls[2]));
-//
-//                hSlider.setValue((int) hls[0]);
-//                lSlider.setValue((int) hls[1]);
-//                sSlider.setValue((int) hls[2]);
-//
-//                colorPanel.setBackground(new Color(r, g, b));
-//                rCount++;
-//            } else {
-//                rCount = 0;
-//            }
-//        }
-//    }
-//
-//    private class CMYKSlideListener implements ChangeListener {
-//        @Override
-//        public void stateChanged(ChangeEvent e) {
-//            if (cCount < 1) {
-//                double c = cSlider.getValue() / 100.0;
-//                double m = mSlider.getValue() / 100.0;
-//                double y = ySlider.getValue() / 100.0;
-//                double k = kSlider.getValue() / 100.0;
-//
-//                cField.setText(String.valueOf(c));
-//                mField.setText(String.valueOf(m));
-//                yField.setText(String.valueOf(y));
-//                kField.setText(String.valueOf(k));
-//
-//
-//                int[] rgb = CMYK.cmykToRgb(c, m, y, k);
-//
-//                rField.setText(String.valueOf(rgb[0]));
-//                gField.setText(String.valueOf(rgb[1]));
-//                bField.setText(String.valueOf(rgb[2]));
-//
-//                double[] hls = CMYK.cmykToHls(c, m, y, k);
-//
-//                hField.setText(String.valueOf(hls[0]));
-//                lField.setText(String.valueOf(hls[1]));
-//                sField.setText(String.valueOf(hls[2]));
-//
-//                rSlider.setValue(rgb[0]);
-//                gSlider.setValue(rgb[1]);
-//                bSlider.setValue(rgb[2]);
-//
-//                cSlider.setValue((int) c);
-//                mSlider.setValue((int) m);
-//                ySlider.setValue((int) y);
-//                kSlider.setValue((int) y);
-//
-//                hSlider.setValue((int) hls[0]);
-//                lSlider.setValue((int) hls[1]);
-//                sSlider.setValue((int) hls[2]);
-//
-//                colorPanel.setBackground(new Color(rgb[0], rgb[1], rgb[2]));
-//                cCount++;
-//            } else {
-//                cCount = 0;
-//            }
-//
-//        }
-//    }
-//
-//    private class HLSSlideListener implements ChangeListener {
-//
-//        @Override
-//        public void stateChanged(ChangeEvent e) {
-//            if (hCount < 1) {
-//                double h = hSlider.getValue();
-//                double l = lSlider.getValue() / 100.0;
-//                double s = sSlider.getValue() / 100.0;
-//
-//                hField.setText(String.valueOf(h));
-//                lField.setText(String.valueOf(l));
-//                sField.setText(String.valueOf(s));
-//
-//
-//                double[] cmyk = HLS.hlsToCmyk(h, l, s);
-//
-//                cField.setText(String.valueOf(cmyk[0]));
-//                mField.setText(String.valueOf(cmyk[1]));
-//                yField.setText(String.valueOf(cmyk[2]));
-//                kField.setText(String.valueOf(cmyk[3]));
-//
-//                int[] rgb = HLS.hlsToRgb(h, l, s);
-//
-//                hField.setText(String.valueOf(rgb[0]));
-//                lField.setText(String.valueOf(rgb[1]));
-//                sField.setText(String.valueOf(rgb[2]));
-//
-//                rSlider.setValue(rgb[0]);
-//                gSlider.setValue(rgb[1]);
-//                bSlider.setValue(rgb[2]);
-//
-//                cSlider.setValue((int) cmyk[0]);
-//                mSlider.setValue((int) cmyk[1]);
-//                ySlider.setValue((int) cmyk[2]);
-//                kSlider.setValue((int) cmyk[3]);
-//
-//                hSlider.setValue((int) h);
-//                lSlider.setValue((int) l);
-//                sSlider.setValue((int) s);
-//
-//                colorPanel.setBackground(new Color(rgb[0], rgb[1], rgb[2]));
-//                hCount++;
-//            } else {
-//                hCount = 0;
-//            }
-//        }
-//    }
 }

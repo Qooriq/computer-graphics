@@ -11,7 +11,7 @@ public class CMYK {
         return new int[] {r, g, b};
     }
 
-    public static double[] cmykToHls(double c, double m, double y, double k) {
+    public static int[] cmykToHls(double c, double m, double y, double k) {
         int[] rgb = cmykToRgb(c, m, y, k);
         return RGB.rgbToHls(rgb[0], rgb[1], rgb[2]);
     }

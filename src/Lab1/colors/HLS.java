@@ -5,33 +5,42 @@ public class HLS {
     private HLS() {
     }
 
-    public static double[] hlsToCmyk(double h, double l, double s) {
+    public static int[] hlsToCmyk(double h, double l, double s) {
         int[] rgb = HLS.hlsToRgb(h, l, s);
         return RGB.rgbToCmyk(rgb[0], rgb[1], rgb[2]);
     }
 
     public static int[] hlsToRgb(double h, double l, double s) {
-        double r, g, b;
-
-        if (s == 0) {
-            r = g = b = l;
-        } else {
-            double m2 = (l < 0.5) ? l * (1 + s) : l + s - (l * s);
-            double m1 = 2 * l - m2;
-            r = hueToRgb(m1, m2, h + 120);
-            g = hueToRgb(m1, m2, h);
-            b = hueToRgb(m1, m2, h - 120);
+        int r, g, b;
+        double c = (1 - Math.abs(2 * l - 1)) * s;
+        double x = c * (1 - Math.abs(h / 60 % 2 - 1));
+        double m = l - c / 2;
+        double rs = c, gs = 0, bs = x;
+        if (h < 60) {
+            rs = c;
+            gs = x;
+            bs = 0;
+        } else if (h < 120) {
+            rs = x;
+            gs = c;
+            bs = 0;
+        } else if (h < 180) {
+            rs = 0;
+            gs = c;
+            bs = x;
+        } else if (h < 240) {
+            rs = 0;
+            gs = x;
+            bs = c;
+        } else if (h < 300) {
+            rs = x;
+            gs = 0;
+            bs = c;
         }
+        r = (int) ((rs + m) * 255);
+        g = (int) ((gs + m) * 255);
+        b = (int) ((bs + m) * 255);
 
-        return new int[]{(int) (r * 255), (int) (g * 255), (int) (b * 255)};
-    }
-
-    private static double hueToRgb(double p, double q, double t) {
-        if (t < 0) t += 360;
-        if (t > 360) t -= 360;
-        if (t < 60) return p + (q - p) * t / 60;
-        if (t < 180) return q;
-        if (t < 240) return p + (q - p) * (240 - t) / 60;
-        return p;
+        return  new int[] {r, g, b};
     }
 }
